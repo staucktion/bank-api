@@ -4,6 +4,9 @@ import envVariables from "src/env/envVariables";
 
 const app = express();
 
+// parse json request body
+app.use(express.json()); 
+
 // route
 setupRoutes(app);
 
