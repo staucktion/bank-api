@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { account, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -7,8 +7,14 @@ const getBankAccountInformation = async (
   opacity: number
 ): Promise<any[]> => {
   try {
-    const result = await prisma.account.findMany();
-    return result;
+    const accounts: account[] = await prisma.account.findMany({
+      include: {
+        cards: true,
+        receiver_transactions: true,
+        sender_transactions: true,
+      },
+    });
+    return accounts;
   } catch (e: any) {
     throw new Error(`Database Error: ${e.message}`);
   } finally {
