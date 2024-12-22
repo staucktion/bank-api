@@ -2,9 +2,9 @@
 CREATE TABLE "account" (
     "id" SERIAL NOT NULL,
     "balance" DECIMAL(15,2) NOT NULL,
+    "provision" DECIMAL(15,2) NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "provision" DECIMAL(15,2) NOT NULL DEFAULT 0,
 
     CONSTRAINT "account_pkey" PRIMARY KEY ("id")
 );
@@ -23,7 +23,7 @@ CREATE TABLE "card" (
     "id" SERIAL NOT NULL,
     "account_id" INTEGER NOT NULL,
     "number" VARCHAR(16) NOT NULL,
-    "expiration_date" DATE NOT NULL,
+    "expiration_date" VARCHAR(5) NOT NULL,
     "cvv" CHAR(3) NOT NULL,
 
     CONSTRAINT "card_pkey" PRIMARY KEY ("id")
