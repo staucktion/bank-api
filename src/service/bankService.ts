@@ -1,8 +1,8 @@
-import { account, PrismaClient } from "@prisma/client";
+import { account, card, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getBankAccountInformation = async (
+const getDummyBankAccountInformation = async (
   bankAccountId: number
 ): Promise<account | null> => {
   try {
@@ -24,6 +24,41 @@ const getBankAccountInformation = async (
   }
 };
 
+const getAccountFromCard = async (
+  cardNumber: string,
+  expirationDate: string,
+  cvv: string
+): Promise<account | null> => {
+  try {
+    const account = await prisma.account.findFirst({
+      where: {
+        cards: {
+          some: {
+            number: cardNumber,
+            expiration_date: expirationDate,
+            cvv: cvv,
+          },
+        },
+      },
+      select: {
+        id: true,
+        balance: true,
+        created_at: true,
+        updated_at: true,
+        provision: true,
+        cards: true
+      },
+    });
+
+    return account;
+  } catch (e: any) {
+    throw new Error(`Database Error: ${e.message}`);
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 export default {
-  getBankAccountInformation,
+  getDummyBankAccountInformation,
+  getAccountFromCard,
 };

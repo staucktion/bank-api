@@ -1,6 +1,7 @@
 import bankService from "src/service/bankService";
+import bankValidation from "src/validation/bank/bankValidation";
 
-const getBankAccountInformation = async (req, res) => {
+const getDummyBankAccountInformation = async (req, res) => {
   // get parameter
   const accountId: number = +req.params.id;
 
@@ -11,9 +12,8 @@ const getBankAccountInformation = async (req, res) => {
 
   // perform operations
   try {
-    const bankAccountInformation = await bankService.getBankAccountInformation(
-      accountId
-    );
+    const bankAccountInformation =
+      await bankService.getDummyBankAccountInformation(accountId);
 
     return res.status(200).send(bankAccountInformation);
   } catch (e: any) {
@@ -21,6 +21,31 @@ const getBankAccountInformation = async (req, res) => {
   }
 };
 
+const getAccountFromCard = async (req, res) => {
+  let cardNumber: string, expirationDate: string, cvv: string;
+
+  // get valid body from request
+  try {
+    ({ cardNumber, expirationDate, cvv } =
+      await bankValidation.getBankAccountInformationValidation(req));
+  } catch (e: any) {
+    return res.status(400).send({ error: e.message });
+  }
+
+  // perform operations
+  try {
+    const bankAccountInformation = await bankService.getAccountFromCard(
+      cardNumber,
+      expirationDate,
+      cvv
+    );
+    return res.status(200).send(bankAccountInformation);
+  } catch (e: any) {
+    return res.status(500).send(e.message);
+  }
+};
+
 export default {
-  getBankAccountInformation,
+  getDummyBankAccountInformation,
+  getAccountFromCard,
 };
