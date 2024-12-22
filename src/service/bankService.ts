@@ -3,18 +3,20 @@ import { account, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const getBankAccountInformation = async (
-  inputPath: string,
-  opacity: number
-): Promise<any[]> => {
+  bankAccountId: number
+): Promise<account | null> => {
   try {
-    const accounts: account[] = await prisma.account.findMany({
+    const accountDetails: account | null = await prisma.account.findUnique({
+      where: {
+        id: bankAccountId,
+      },
       include: {
         cards: true,
         receiver_transactions: true,
         sender_transactions: true,
       },
     });
-    return accounts;
+    return accountDetails;
   } catch (e: any) {
     throw new Error(`Database Error: ${e.message}`);
   } finally {
