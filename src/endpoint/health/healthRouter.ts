@@ -13,7 +13,7 @@ router.get("/health/info", (req, res) => {
   res.status(200).json({
     status: "UP",
     mode: Config.mode,
-    information: "this api provides simulated bank api actions",
+    description: "this api provides simulated bank api actions",
   });
 });
 
