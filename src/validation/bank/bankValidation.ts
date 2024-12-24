@@ -3,7 +3,7 @@ const getBankAccountInformationValidation = async (req) => {
 
   if (!cardNumber || !expirationDate || !cvv) {
     throw new Error(
-      `Input Error: accountNumber, expirationDate, cvv is required`
+      `Input Error: cardNumber, expirationDate, cvv is required`
     );
   }
 
