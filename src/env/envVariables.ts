@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const envVariables = {
-  PORT: process.env.PORT || 80,
-};
+class EnvVairables {
+  static port = process.env.PORT || 80;
+}
 
-export default envVariables;
+export default EnvVairables;
