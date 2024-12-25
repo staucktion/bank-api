@@ -1,5 +1,5 @@
-import BankService from "src/service/bankService";
-import BankValidation from "src/validation/bank/bankValidation";
+import BankService from "src/service/BankService";
+import BankValidation from "src/validation/bank/BankValidation";
 
 class BankFacade {
   private bankValidation: BankValidation;
