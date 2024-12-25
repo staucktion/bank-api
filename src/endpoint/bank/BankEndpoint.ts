@@ -15,6 +15,10 @@ class BankEndpoint {
     this.router.post("/bank/account", async (req, res) => {
       return await this.bankFacade.getAccountFromCard(req, res);
     });
+
+    this.router.get("/bank/auditlog", async (req, res) => {
+      return await this.bankFacade.getAllAuditLog(req, res);
+    });
   }
 
   public getRouter(): Router {

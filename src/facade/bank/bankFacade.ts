@@ -38,6 +38,16 @@ class BankFacade {
     // return response
     return res.status(200).send(bankAccountInformation);
   };
+
+  getAllAuditLog = async (req, res) => {
+    // get auditlog
+    try {
+      const allAuditLog = await this.bankService.getAllAuditLog();
+      return res.status(200).send(allAuditLog);
+    } catch (error: any) {
+      return res.status(500).send(error.message);
+    }
+  };
 }
 
 export default BankFacade;

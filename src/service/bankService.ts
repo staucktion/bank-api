@@ -66,6 +66,21 @@ class BankService {
         .throwError();
     }
   }
+
+  public async getAllAuditLog(): Promise<auditlog[] | null> {
+    try {
+      const auditLogs = await this.prisma.auditlog.findMany();
+      return auditLogs;
+    } catch (error: any) {
+      CustomError.builder()
+        .setErrorType("Prisma Error")
+        .setClassName(this.constructor.name)
+        .setMethodName("getAllAuditLog")
+        .setError(error)
+        .build()
+        .throwError();
+    }
+  }
 }
 
 export default BankService;
