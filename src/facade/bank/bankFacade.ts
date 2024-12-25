@@ -30,7 +30,7 @@ class BankFacade {
 
     // keep auditlog
     try {
-      bankAccountInformation = await this.bankService.writeAuditLog(`Bank account information for card number "${cardNumber}" is queried.`);
+      await this.bankService.writeAuditLog(`Bank account information for card number "${cardNumber}" is queried.`);
     } catch (error: any) {
       console.error(error.message);
     }
