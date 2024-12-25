@@ -33,6 +33,7 @@ class CustomError {
 
     if (this.message) errorMessage += this.message;
 
+    console.error(errorMessage);
     throw new Error(errorMessage);
   }
 
