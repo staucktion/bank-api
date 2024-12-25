@@ -1,16 +1,21 @@
 import { account, PrismaClient } from "@prisma/client";
 import CustomError from "src/error/CustomError";
-
-const prisma = new PrismaClient();
+import PrismaUtil from "src/util/PrismaUtil";
 
 class BankService {
+  private prisma: PrismaClient;
+
+  constructor() {
+    this.prisma = PrismaUtil.getPrismaClient();
+  }
+
   public async getAccountFromCard(
     cardNumber: string,
     expirationDate: string,
     cvv: string
   ): Promise<account | null> {
     try {
-      const account = await prisma.account.findFirst({
+      const account = await this.prisma.account.findFirst({
         where: {
           cards: {
             some: {
@@ -32,7 +37,6 @@ class BankService {
 
       return account;
     } catch (error: any) {
-      await prisma.$disconnect();
       CustomError.builder()
         .setErrorType("Prisma Error")
         .setClassName(this.constructor.name)
@@ -40,6 +44,7 @@ class BankService {
         .setError(error)
         .build()
         .throwError();
+      await this.prisma.$disconnect();
     }
   }
 }
