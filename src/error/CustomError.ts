@@ -5,13 +5,7 @@ class CustomError {
   private readonly error: any;
   private readonly message: string;
 
-  private constructor(
-    errorType: string,
-    className: string,
-    methodName: string,
-    error: Error,
-    message: string
-  ) {
+  private constructor(errorType: string, className: string, methodName: string, error: Error, message: string) {
     this.errorType = errorType;
     this.className = className;
     this.methodName = methodName;
@@ -23,7 +17,7 @@ class CustomError {
     return new this.Builder();
   }
 
-  public throwError() {
+  private getErrorMessage(): string {
     let errorMessage = `${this.errorType} -> ${this.className}.${this.methodName}: `;
 
     if (this.error?.response)
@@ -33,8 +27,18 @@ class CustomError {
 
     if (this.message) errorMessage += this.message;
 
+    return errorMessage;
+  }
+
+  public throwError() {
+    const errorMessage = this.getErrorMessage();
     console.error(errorMessage);
     throw new Error(errorMessage);
+  }
+
+  public logToTerminal() {
+    const errorMessage = this.getErrorMessage();
+    console.error(errorMessage);
   }
 
   // nested builder class

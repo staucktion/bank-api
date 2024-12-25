@@ -1,4 +1,4 @@
-import { account, PrismaClient } from "@prisma/client";
+import { account, auditlog, PrismaClient } from "@prisma/client";
 import CustomError from "src/error/CustomError";
 import PrismaUtil from "src/util/PrismaUtil";
 
@@ -44,7 +44,26 @@ class BankService {
         .setError(error)
         .build()
         .throwError();
-      await this.prisma.$disconnect();
+    }
+  }
+
+  public async writeAuditLog(action: string): Promise<auditlog | null> {
+    try {
+      const newAuditLog = await this.prisma.auditlog.create({
+        data: {
+          action: action,
+        },
+      });
+
+      return newAuditLog;
+    } catch (error: any) {
+      CustomError.builder()
+        .setErrorType("Prisma Error")
+        .setClassName(this.constructor.name)
+        .setMethodName("getAccountFromCard")
+        .setError(error)
+        .build()
+        .throwError();
     }
   }
 }
