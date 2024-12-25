@@ -32,6 +32,7 @@ class BankService {
 
       return account;
     } catch (error: any) {
+      await prisma.$disconnect();
       CustomError.builder()
         .setErrorType("Prisma Error")
         .setClassName(this.constructor.name)
@@ -39,8 +40,6 @@ class BankService {
         .setError(error)
         .build()
         .throwError();
-    } finally {
-      await prisma.$disconnect();
     }
   }
 }
