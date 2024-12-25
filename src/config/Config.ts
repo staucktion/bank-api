@@ -1,4 +1,4 @@
-import EnvVairables from "src/env/envVariables";
+import EnvVairables from "src/env/EnvVariables";
 
 class Config {
   static port = EnvVairables.port;

@@ -6,7 +6,8 @@ npm i
 ```
 
 ### Configure env variables
-Rename `.env.example` as `.env` with proper configurations.
+According to mode:
+Rename `.env.prod.example` or `.env.dev.example` as `.env` with proper configurations.
 
 ### Run dev server with hot reload
 ```
@@ -14,4 +15,4 @@ npm run dev
 ```
 
 ### Test endpoint
-`/test` directory includes postman endpoint test.
+checkout test-bank-api repository.
