@@ -1,6 +1,6 @@
 import express from "express";
 import BankEndpoint from "src/endpoint/bank/BankEndpoint";
-import HealthEndpoint from "src/endpoint/health/healthEndpoint";
+import HealthEndpoint from "src/endpoint/health/HealthEndpoint";
 
 class Router {
   private healthEndpoint: HealthEndpoint;

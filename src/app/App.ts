@@ -1,5 +1,6 @@
 import express, { Application } from "express";
 import Config from "src/config/Config";
+import Logger from "src/log/Logger";
 import Router from "src/router/Router";
 import PrismaUtil from "src/util/PrismaUtil";
 
@@ -16,6 +17,9 @@ class App {
   }
 
   private initializeMiddlewares(): void {
+    // log incoming requests
+    this.app.use(Logger.logRequest);
+
     // parse JSON request body
     this.app.use(express.json());
   }
