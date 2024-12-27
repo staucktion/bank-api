@@ -1,0 +1,9 @@
+./note
+./node_modules
+./.env.dev.example
+./.env.prod.example
+./.git
+./.gitignore
+./.dockerignore
+./Dockerfile
+./README.md
