@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --exec tsx index.ts",
-    "serve": "cls && tsx index.ts"
+    "serve": "tsx index.ts"
   },
   "keywords": [],
   "license": "ISC",
