@@ -2,32 +2,32 @@ import express, { Router } from "express";
 import Config from "src/config/Config";
 
 class HealthEndpoint {
-  private router: Router;
+	private router: Router;
 
-  constructor() {
-    this.router = express.Router();
-    this.initializeRoutes();
-  }
+	constructor() {
+		this.router = express.Router();
+		this.initializeRoutes();
+	}
 
-  private initializeRoutes(): void {
-    this.router.get("/health", (req, res) => {
-      res.status(200).json({
-        status: "UP",
-      });
-    });
+	private initializeRoutes(): void {
+		this.router.get("/health", (req, res) => {
+			res.status(200).json({
+				status: "UP",
+			});
+		});
 
-    this.router.get("/health/info", (req, res) => {
-      res.status(200).json({
-        status: "UP",
-        mode: Config.mode,
-        description: "this API provides simulated bank API actions",
-      });
-    });
-  }
+		this.router.get("/health/info", (req, res) => {
+			res.status(200).json({
+				status: "UP",
+				mode: Config.mode,
+				description: "this API provides simulated bank API actions",
+			});
+		});
+	}
 
-  public getRouter(): Router {
-    return this.router;
-  }
+	public getRouter(): Router {
+		return this.router;
+	}
 }
 
 export default HealthEndpoint;
