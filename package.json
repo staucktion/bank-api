@@ -1,7 +1,7 @@
 {
-	"name": "second-increment-backend",
+	"name": "bank-api",
 	"version": "1.0.0",
-	"description": "watermarking",
+	"description": "bank simulation api",
 	"author": "-",
 	"main": "-",
 	"type": "module",
