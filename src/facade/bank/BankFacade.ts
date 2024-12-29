@@ -1,5 +1,5 @@
 import { account } from "@prisma/client";
-import BankService from "src/service/BankService";
+import BankService from "src/service/bank/BankService";
 import BankValidation from "src/validation/bank/BankValidation";
 
 class BankFacade {
