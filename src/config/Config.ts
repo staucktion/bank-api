@@ -1,8 +1,9 @@
-import EnvVairables from "src/env/EnvVariables";
+import EnvVariables from "src/env/EnvVariables";
 
 class Config {
-	static port = EnvVairables.port;
-	static mode = EnvVairables.mode;
+	static port = EnvVariables.port;
+	static mode = EnvVariables.mode;
+	static log = EnvVariables.log;
 }
 
 export default Config;
