@@ -2,7 +2,6 @@ import express, { Application } from "express";
 import Config from "src/config/Config";
 import Logger from "src/log/Logger";
 import Router from "src/router/Router";
-import PrismaUtil from "src/util/PrismaUtil";
 
 class App {
 	private app: Application;
@@ -13,7 +12,6 @@ class App {
 		this.router = new Router();
 		this.initializeMiddlewares();
 		this.initializeRoutes();
-		this.initializePrismaConnection();
 	}
 
 	private initializeMiddlewares(): void {
@@ -27,11 +25,6 @@ class App {
 	private initializeRoutes(): void {
 		// setup routes
 		this.router.setupRoute(this.app);
-	}
-
-	private initializePrismaConnection(): void {
-		// initialize prisma client
-		PrismaUtil.initalizePrismaClient();
 	}
 
 	public listen(): void {

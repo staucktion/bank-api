@@ -11,12 +11,6 @@ class PrismaUtil {
 		}
 		return PrismaUtil.prisma;
 	}
-
-	public static initalizePrismaClient(): void {
-		if (!PrismaUtil.prisma) {
-			PrismaUtil.prisma = new PrismaClient();
-		}
-	}
 }
 
 export default PrismaUtil;
