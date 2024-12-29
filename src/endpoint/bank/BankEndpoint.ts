@@ -12,15 +12,15 @@ class BankEndpoint {
 	}
 
 	private initializeRoutes(): void {
-		this.router.post("/account", async (req, res) => {
+		this.router.post("/accounts", async (req, res) => {
 			return await this.bankFacade.getAccountFromCard(req, res);
 		});
 
-		this.router.get("/auditlog", async (req, res) => {
+		this.router.get("/auditlogs", async (req, res) => {
 			return await this.bankFacade.getAllAuditLog(req, res);
 		});
 
-		this.router.put("/provision", async (req, res) => {
+		this.router.put("/provisions/add", async (req, res) => {
 			return await this.bankFacade.provision(req, res);
 		});
 	}
