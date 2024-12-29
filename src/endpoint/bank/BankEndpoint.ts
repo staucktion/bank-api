@@ -19,6 +19,10 @@ class BankEndpoint {
 		this.router.get("/auditlog", async (req, res) => {
 			return await this.bankFacade.getAllAuditLog(req, res);
 		});
+
+		this.router.put("/provision", async (req, res) => {
+			return await this.bankFacade.provision(req, res);
+		});
 	}
 
 	public getRouter(): Router {
