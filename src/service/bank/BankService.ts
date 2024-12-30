@@ -78,7 +78,7 @@ class BankService {
 		}
 	}
 
-	public async provision(bankAccountInformation: account, provision: number): Promise<void> {
+	public async addProvision(bankAccountInformation: account, provision: number): Promise<void> {
 		await this.prisma.account.update({
 			where: {
 				id: bankAccountInformation.id,
@@ -86,6 +86,18 @@ class BankService {
 			data: {
 				balance: bankAccountInformation.balance.toNumber() - provision,
 				provision: bankAccountInformation.provision.toNumber() + provision,
+			},
+		});
+	}
+
+	public async removeProvision(bankAccountInformation: account, provision: number): Promise<void> {
+		await this.prisma.account.update({
+			where: {
+				id: bankAccountInformation.id,
+			},
+			data: {
+				balance: bankAccountInformation.balance.toNumber() + provision,
+				provision: bankAccountInformation.provision.toNumber() - provision,
 			},
 		});
 	}

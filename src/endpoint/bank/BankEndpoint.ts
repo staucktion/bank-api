@@ -21,7 +21,11 @@ class BankEndpoint {
 		});
 
 		this.router.put("/provisions/add", async (req, res) => {
-			return await this.bankFacade.provision(req, res);
+			return await this.bankFacade.addProvision(req, res);
+		});
+
+		this.router.put("/provisions/remove", async (req, res) => {
+			return await this.bankFacade.removeProvision(req, res);
 		});
 	}
 
