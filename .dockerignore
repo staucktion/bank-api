@@ -1,10 +1,10 @@
-./note
+./.git
 ./node_modules
+./note
+./.dockerignore
+./.editorconfig
 ./.env.dev.example
 ./.env.prod.example
-./.git
 ./.gitignore
-./.dockerignore
 ./Dockerfile
 ./README.md
-./editorconfig
