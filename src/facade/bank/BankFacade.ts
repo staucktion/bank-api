@@ -50,7 +50,7 @@ class BankFacade {
 		}
 	};
 
-	provision = async (req, res) => {
+	addProvision = async (req, res) => {
 		let cardNumber: string, expirationDate: string, cvv: string, provision: number;
 
 		// get valid body from request
@@ -70,14 +70,14 @@ class BankFacade {
 
 		// validate balance for provision
 		try {
-			await this.bankValidation.checkBalanceForProvision(bankAccountInformation, provision);
+			await this.bankValidation.checkBalanceToAddProvision(bankAccountInformation, provision);
 		} catch (e: any) {
 			return res.status(400).send({ error: e.message });
 		}
 
 		// make provision
 		try {
-			await this.bankService.provision(bankAccountInformation, provision);
+			await this.bankService.addProvision(bankAccountInformation, provision);
 		} catch (error: any) {
 			return res.status(500).send(error.message);
 		}
@@ -85,6 +85,49 @@ class BankFacade {
 		// keep auditlog
 		try {
 			await this.bankService.writeAuditLog(`"${provision}" provision made for the account with card number: "${cardNumber}".`);
+		} catch (error: any) {
+			console.error(error.message);
+		}
+
+		// return success
+		res.status(200).send();
+	};
+
+	removeProvision = async (req, res) => {
+		let cardNumber: string, expirationDate: string, cvv: string, provision: number;
+
+		// get valid body from request
+		try {
+			({ cardNumber, expirationDate, cvv, provision } = await this.bankValidation.provisionRequest(req));
+		} catch (e: any) {
+			return res.status(400).send({ error: e.message });
+		}
+
+		// get account information
+		let bankAccountInformation: account;
+		try {
+			bankAccountInformation = await this.bankService.getAccountFromCard(cardNumber, expirationDate, cvv);
+		} catch (error: any) {
+			return res.status(500).send(error.message);
+		}
+
+		// validate provision
+		try {
+			await this.bankValidation.checkProvisionToRemove(bankAccountInformation, provision);
+		} catch (e: any) {
+			return res.status(400).send({ error: e.message });
+		}
+
+		// remove provision
+		try {
+			await this.bankService.removeProvision(bankAccountInformation, provision);
+		} catch (error: any) {
+			return res.status(500).send(error.message);
+		}
+
+		// keep auditlog
+		try {
+			await this.bankService.writeAuditLog(`"${provision}" provision removed for the account with card number: "${cardNumber}".`);
 		} catch (error: any) {
 			console.error(error.message);
 		}

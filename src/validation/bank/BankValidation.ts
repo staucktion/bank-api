@@ -49,13 +49,13 @@ class BankValidation {
 		return { cardNumber, expirationDate, cvv, provision };
 	}
 
-	public async checkBalanceForProvision(bankAccountInformation: account, offeredProvision: number): Promise<void> {
+	public async checkBalanceToAddProvision(bankAccountInformation: account, offeredProvision: number): Promise<void> {
 		// check field
 		if (!bankAccountInformation || !bankAccountInformation.balance || !bankAccountInformation.provision) {
 			CustomError.builder()
 				.setErrorType("Input Validation Error")
 				.setClassName(this.constructor.name)
-				.setMethodName("checkBalanceForProvision")
+				.setMethodName("checkBalanceToAddProvision")
 				.setMessage("valid bank card credentials required")
 				.build()
 				.throwError();
@@ -66,8 +66,32 @@ class BankValidation {
 			CustomError.builder()
 				.setErrorType("Client Error")
 				.setClassName(this.constructor.name)
-				.setMethodName("checkBalanceForProvision")
-				.setMessage("not enough balance for provision")
+				.setMethodName("checkBalanceToAddProvision")
+				.setMessage("not enough balance to provision")
+				.build()
+				.throwError();
+		}
+	}
+
+	public async checkProvisionToRemove(bankAccountInformation: account, offeredProvision: number): Promise<void> {
+		// check field
+		if (!bankAccountInformation || !bankAccountInformation.balance || !bankAccountInformation.provision) {
+			CustomError.builder()
+				.setErrorType("Input Validation Error")
+				.setClassName(this.constructor.name)
+				.setMethodName("checkProvisionToRemove")
+				.setMessage("valid bank card credentials required")
+				.build()
+				.throwError();
+		}
+
+		// check balance for provision
+		if (offeredProvision > bankAccountInformation.provision.toNumber()) {
+			CustomError.builder()
+				.setErrorType("Client Error")
+				.setClassName(this.constructor.name)
+				.setMethodName("checkProvisionToRemove")
+				.setMessage("not enough provision to remove")
 				.build()
 				.throwError();
 		}
