@@ -1,12 +1,17 @@
-import TransactionDto from "src/dto/bank/TransactionDto";
 import CustomError from "src/error/CustomError";
 
 class ValidationUtil {
+	public static checkExistence(dto) {
+		if (dto === undefined || dto === null || dto === "") {
+			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage(`Missing required object.`).build().throwError();
+		}
+	}
+
 	public static checkRequiredFields(requiredFields: string[], dto) {
 		const missingFields = requiredFields.filter((field) => dto[field] === undefined || dto[field] === null || dto[field] === "");
 
 		if (missingFields.length !== 0) {
-			CustomError.builder().setErrorType("Input Validation").setMessage(`Missing request fields: ${missingFields}`).build().throwError();
+			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage(`Missing request fields: ${missingFields}`).build().throwError();
 		}
 	}
 
@@ -14,7 +19,7 @@ class ValidationUtil {
 		const invalidFields = numericFields.filter((field) => isNaN(Number(dto[field])));
 
 		if (invalidFields.length !== 0) {
-			CustomError.builder().setErrorType("Input Validation").setMessage(`Invalid numeric fields: ${invalidFields}`).build().throwError();
+			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage(`Invalid numeric fields: ${invalidFields}`).build().throwError();
 		}
 	}
 

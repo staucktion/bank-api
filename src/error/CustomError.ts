@@ -4,16 +4,18 @@ class CustomError {
 	private static counter = 0;
 	private readonly errorId: number;
 	private readonly errorType: string;
-	private readonly error: any;
+	private readonly statusCode: number;
 	private readonly stackTrace: string;
 	private readonly message: string;
+	private readonly externalMessage: string;
 
-	private constructor(errorType: string, error: Error, message: string) {
+	private constructor(errorType: string, statusCode: number, message: string, externalMessage: string) {
 		this.errorId = CustomError.counter++;
 		this.errorType = errorType;
+		this.statusCode = statusCode;
 		this.stackTrace = new Error().stack;
-		this.error = error;
 		this.message = message;
+		this.externalMessage = externalMessage;
 	}
 
 	public static builder() {
@@ -24,23 +26,21 @@ class CustomError {
 		const errorBody: any = {
 			errorId: this.errorId,
 			errorType: this.errorType,
+			statusCode: this.statusCode,
 			stackTrace: this.stackTrace,
 			message: this.message,
+			externalMessage: this.externalMessage,
 		};
-
-		if (this.error?.response) {
-			errorBody.response = this.error.response.data;
-		}
-
-		if (this.error?.code) {
-			errorBody.errorCode = this.error.code;
-		}
 
 		return errorBody;
 	}
 
-	public getMessage(): string {
-		return this.message;
+	public getStatusCode(): number {
+		return this.statusCode;
+	}
+
+	public getMessage(): object {
+		return { message: this.message };
 	}
 
 	public log() {
@@ -48,23 +48,24 @@ class CustomError {
 		console.error(this.getBody());
 	}
 
-	public throwError() {
+	public throwError(): CustomError {
 		throw this;
 	}
 
 	// nested builder class
 	private static Builder = class {
 		private errorType: string;
-		private error: Error;
+		private statusCode: number;
 		private message: string;
+		private externalMessage: string;
 
 		public setErrorType(errorType: string): this {
 			this.errorType = errorType;
 			return this;
 		}
 
-		public setError(error: Error): this {
-			this.error = error;
+		public setStatusCode(statusCode: number): this {
+			this.statusCode = statusCode;
 			return this;
 		}
 
@@ -73,8 +74,13 @@ class CustomError {
 			return this;
 		}
 
+		public setExternalMessage(externalMessage: string): this {
+			this.externalMessage = externalMessage;
+			return this;
+		}
+
 		public build(): CustomError {
-			return new CustomError(this.errorType, this.error, this.message);
+			return new CustomError(this.errorType, this.statusCode, this.message, this.externalMessage);
 		}
 	};
 }

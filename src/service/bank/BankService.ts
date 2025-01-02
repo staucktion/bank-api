@@ -33,7 +33,7 @@ class BankService {
 
 			return account;
 		} catch (error: any) {
-			CustomError.builder().setErrorType("Prisma Error").setClassName(this.constructor.name).setMethodName("getAccountFromCard").setError(error).build().throwError();
+			CustomError.builder().setErrorType("Prisma Error").setStatusCode(500).setExternalMessage(error.message).setMessage("Cannot perform database operation.").build().throwError();
 		}
 	}
 
@@ -59,7 +59,7 @@ class BankService {
 
 			return account;
 		} catch (error: any) {
-			CustomError.builder().setErrorType("Prisma Error").setClassName(this.constructor.name).setMethodName("getAccountFromCard").setError(error).build().throwError();
+			CustomError.builder().setErrorType("Prisma Error").setStatusCode(500).setExternalMessage(error.message).setMessage("Cannot perform database operation.").build().throwError();
 		}
 	}
 
@@ -73,7 +73,7 @@ class BankService {
 
 			return newAuditLog;
 		} catch (error: any) {
-			CustomError.builder().setErrorType("Prisma Error").setClassName(this.constructor.name).setMethodName("getAccountFromCard").setError(error).build().throwError();
+			CustomError.builder().setErrorType("Prisma Error").setStatusCode(500).setExternalMessage(error.message).setMessage("Cannot perform database operation.").build().throwError();
 		}
 	}
 
@@ -82,54 +82,66 @@ class BankService {
 			const auditLogs = await this.prisma.auditlog.findMany();
 			return auditLogs;
 		} catch (error: any) {
-			CustomError.builder().setErrorType("Prisma Error").setClassName(this.constructor.name).setMethodName("getAllAuditLog").setError(error).build().throwError();
+			CustomError.builder().setErrorType("Prisma Error").setStatusCode(500).setExternalMessage(error.message).setMessage("Cannot perform database operation.").build().throwError();
 		}
 	}
 
 	public async addProvision(bankAccountInformation: account, provision: number): Promise<void> {
-		await this.prisma.account.update({
-			where: {
-				id: bankAccountInformation.id,
-			},
-			data: {
-				balance: bankAccountInformation.balance.toNumber() - provision,
-				provision: bankAccountInformation.provision.toNumber() + provision,
-			},
-		});
+		try {
+			await this.prisma.account.update({
+				where: {
+					id: bankAccountInformation.id,
+				},
+				data: {
+					balance: bankAccountInformation.balance.toNumber() - provision,
+					provision: bankAccountInformation.provision.toNumber() + provision,
+				},
+			});
+		} catch (error: any) {
+			CustomError.builder().setErrorType("Prisma Error").setStatusCode(500).setExternalMessage(error.message).setMessage("Cannot perform database operation.").build().throwError();
+		}
 	}
 
 	public async removeProvision(bankAccountInformation: account, provision: number): Promise<void> {
-		await this.prisma.account.update({
-			where: {
-				id: bankAccountInformation.id,
-			},
-			data: {
-				balance: bankAccountInformation.balance.toNumber() + provision,
-				provision: bankAccountInformation.provision.toNumber() - provision,
-			},
-		});
+		try {
+			await this.prisma.account.update({
+				where: {
+					id: bankAccountInformation.id,
+				},
+				data: {
+					balance: bankAccountInformation.balance.toNumber() + provision,
+					provision: bankAccountInformation.provision.toNumber() - provision,
+				},
+			});
+		} catch (error: any) {
+			CustomError.builder().setErrorType("Prisma Error").setStatusCode(500).setExternalMessage(error.message).setMessage("Cannot perform database operation.").build().throwError();
+		}
 	}
 
 	public async makeTransaction(senderAccountInformation: account, targetAccountInformation: account, amount: number): Promise<void> {
-		await this.prisma.$transaction(async (prisma) => {
-			await prisma.account.update({
-				where: {
-					id: senderAccountInformation.id,
-				},
-				data: {
-					balance: senderAccountInformation.balance.toNumber() - amount,
-				},
-			});
+		try {
+			await this.prisma.$transaction(async (prisma) => {
+				await prisma.account.update({
+					where: {
+						id: senderAccountInformation.id,
+					},
+					data: {
+						balance: senderAccountInformation.balance.toNumber() - amount,
+					},
+				});
 
-			await prisma.account.update({
-				where: {
-					id: targetAccountInformation.id,
-				},
-				data: {
-					balance: targetAccountInformation.balance.toNumber() + amount,
-				},
+				await prisma.account.update({
+					where: {
+						id: targetAccountInformation.id,
+					},
+					data: {
+						balance: targetAccountInformation.balance.toNumber() + amount,
+					},
+				});
 			});
-		});
+		} catch (error: any) {
+			CustomError.builder().setErrorType("Prisma Error").setStatusCode(500).setExternalMessage(error.message).setMessage("Cannot perform database operation.").build().throwError();
+		}
 	}
 }
 
