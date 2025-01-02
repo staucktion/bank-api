@@ -1,55 +1,49 @@
 import { account } from "@prisma/client";
 import { Request } from "express";
+import CardDto from "src/dto/bank/CardDto";
+import ProvisionDto from "src/dto/bank/ProvisionDto";
 import TransactionDto from "src/dto/bank/TransactionDto";
 import CustomError from "src/error/CustomError";
 import ValidationUtil from "src/util/ValidationUtil";
 
 class BankValidation {
-	public async getAccountFromCardRequest(req: any): Promise<{ cardNumber: string; expirationDate: string; cvv: string }> {
-		const { cardNumber, expirationDate, cvv } = req.body;
+	public async getAccountFromCardRequest(req: Request): Promise<CardDto> {
+		const cardDto: CardDto = req.body;
+		const requiredFields: string[] = ["cardNumber", "expirationDate", "cvv"];
 
-		if (!cardNumber || !expirationDate || !cvv) {
-			CustomError.builder()
-				.setErrorType("Input Validation Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("getAccountFromCardRequest")
-				.setMessage("cardNumber, expirationDate, and cvv required")
-				.build()
-				.throwError();
+		// validate required fields
+		try {
+			ValidationUtil.checkRequiredFields(requiredFields, cardDto);
+		} catch (error: any) {
+			throw error;
 		}
 
-		return { cardNumber, expirationDate, cvv };
+		return cardDto;
 	}
 
-	public async provisionRequest(req: any): Promise<{ cardNumber: string; expirationDate: string; cvv: string; provision: number }> {
-		let { cardNumber, expirationDate, cvv, provision } = req.body;
+	public async provisionRequest(req: any): Promise<ProvisionDto> {
+		const provisionDto: ProvisionDto = req.body;
+		const requiredFields: string[] = ["cardNumber", "expirationDate", "cvv", "provision"];
+		const numericFields = ["provision"];
 
-		// check required fields
-		if (!cardNumber || !expirationDate || !cvv || !provision) {
-			CustomError.builder()
-				.setErrorType("Input Validation Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("getAccountFromCardRequest")
-				.setMessage("cardNumber, expirationDate, cvv, and provision required")
-				.build()
-				.throwError();
+		// validate required fields
+		try {
+			ValidationUtil.checkRequiredFields(requiredFields, provisionDto);
+		} catch (error: any) {
+			throw error;
 		}
 
-		// convert numeric field
-		provision = parseFloat(provision);
-
-		// check data type
-		if (isNaN(provision)) {
-			CustomError.builder()
-				.setErrorType("Input Validation Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("getAccountFromCardRequest")
-				.setMessage("provision should be numeric")
-				.build()
-				.throwError();
+		// validate numeric fields
+		try {
+			ValidationUtil.validateNumericFields(numericFields, provisionDto);
+		} catch (error: any) {
+			throw error;
 		}
 
-		return { cardNumber, expirationDate, cvv, provision };
+		// assign numeric fields
+		ValidationUtil.assignNumericFields(numericFields, provisionDto);
+
+		return provisionDto;
 	}
 
 	public async makeTransactionRequest(req: Request): Promise<TransactionDto> {
@@ -77,70 +71,47 @@ class BankValidation {
 		return transactionDto;
 	}
 
-	public async checkAccountExistence(bankAccountInformation: account): Promise<void> {
-		// check field
-		if (!bankAccountInformation || !bankAccountInformation.id) {
-			CustomError.builder().setErrorType("Input Validation").setMessage("Invalid card details").build().throwError();
+	public async checkAccount(bankAccountInformation: account): Promise<void> {
+		const requiredFields: string[] = ["id", "balance"];
+
+		// validate object existence
+		try {
+			ValidationUtil.checkExistence(bankAccountInformation);
+		} catch (error: any) {
+			throw error;
+		}
+
+		// validate required fields
+		try {
+			ValidationUtil.checkRequiredFields(requiredFields, bankAccountInformation);
+		} catch (error: any) {
+			throw error;
 		}
 	}
 
 	public async transactionAmount(senderAccountInformation: account, amount: number): Promise<void> {
 		// check field
 		if (!senderAccountInformation || !senderAccountInformation.balance) {
-			CustomError.builder().setErrorType("Input Validation").setMessage("Invalid card details").build().throwError();
+			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage("Invalid card details").build().throwError();
 		}
 
 		// check balance for sufficiency
 		if (senderAccountInformation.balance.toNumber() < amount) {
-			CustomError.builder().setErrorType("Input Validation Error").setMessage("Balance is not sufficient for transaction.").build().throwError();
+			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage("Balance is not sufficient for transaction.").build().throwError();
 		}
 	}
 
 	public async checkBalanceToAddProvision(bankAccountInformation: account, offeredProvision: number): Promise<void> {
-		// check field
-		if (!bankAccountInformation || !bankAccountInformation.balance || !bankAccountInformation.provision) {
-			CustomError.builder()
-				.setErrorType("Input Validation Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("checkBalanceToAddProvision")
-				.setMessage("valid bank card credentials required")
-				.build()
-				.throwError();
-		}
-
-		// check balance for provision
+		// check balance for sufficiency
 		if (offeredProvision > bankAccountInformation.balance.toNumber()) {
-			CustomError.builder()
-				.setErrorType("Client Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("checkBalanceToAddProvision")
-				.setMessage("not enough balance to provision")
-				.build()
-				.throwError();
+			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage("Balance is not sufficient for provision.").build().throwError();
 		}
 	}
 
 	public async checkProvisionToRemove(bankAccountInformation: account, offeredProvision: number): Promise<void> {
-		// check field
-		if (!bankAccountInformation || !bankAccountInformation.balance || !bankAccountInformation.provision) {
-			CustomError.builder()
-				.setErrorType("Input Validation Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("checkProvisionToRemove")
-				.setMessage("valid bank card credentials required")
-				.build()
-				.throwError();
-		}
-
 		// check balance for provision
 		if (offeredProvision > bankAccountInformation.provision.toNumber()) {
-			CustomError.builder()
-				.setErrorType("Client Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("checkProvisionToRemove")
-				.setMessage("not enough provision to remove")
-				.build()
-				.throwError();
+			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage("Account provision is not sufficient to remove that much provision.").build().throwError();
 		}
 	}
 }
