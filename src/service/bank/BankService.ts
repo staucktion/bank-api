@@ -33,13 +33,33 @@ class BankService {
 
 			return account;
 		} catch (error: any) {
-			CustomError.builder()
-				.setErrorType("Prisma Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("getAccountFromCard")
-				.setError(error)
-				.build()
-				.throwError();
+			CustomError.builder().setErrorType("Prisma Error").setClassName(this.constructor.name).setMethodName("getAccountFromCard").setError(error).build().throwError();
+		}
+	}
+
+	public async getAccountFromCardNumber(cardNumber: string): Promise<account | null> {
+		try {
+			const account = await this.prisma.account.findFirst({
+				where: {
+					cards: {
+						some: {
+							number: cardNumber,
+						},
+					},
+				},
+				select: {
+					id: true,
+					balance: true,
+					created_at: true,
+					updated_at: true,
+					provision: true,
+					cards: true,
+				},
+			});
+
+			return account;
+		} catch (error: any) {
+			CustomError.builder().setErrorType("Prisma Error").setClassName(this.constructor.name).setMethodName("getAccountFromCard").setError(error).build().throwError();
 		}
 	}
 
@@ -53,13 +73,7 @@ class BankService {
 
 			return newAuditLog;
 		} catch (error: any) {
-			CustomError.builder()
-				.setErrorType("Prisma Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("getAccountFromCard")
-				.setError(error)
-				.build()
-				.throwError();
+			CustomError.builder().setErrorType("Prisma Error").setClassName(this.constructor.name).setMethodName("getAccountFromCard").setError(error).build().throwError();
 		}
 	}
 
@@ -68,13 +82,7 @@ class BankService {
 			const auditLogs = await this.prisma.auditlog.findMany();
 			return auditLogs;
 		} catch (error: any) {
-			CustomError.builder()
-				.setErrorType("Prisma Error")
-				.setClassName(this.constructor.name)
-				.setMethodName("getAllAuditLog")
-				.setError(error)
-				.build()
-				.throwError();
+			CustomError.builder().setErrorType("Prisma Error").setClassName(this.constructor.name).setMethodName("getAllAuditLog").setError(error).build().throwError();
 		}
 	}
 
@@ -99,6 +107,28 @@ class BankService {
 				balance: bankAccountInformation.balance.toNumber() + provision,
 				provision: bankAccountInformation.provision.toNumber() - provision,
 			},
+		});
+	}
+
+	public async makeTransaction(senderAccountInformation: account, targetAccountInformation: account, amount: number): Promise<void> {
+		await this.prisma.$transaction(async (prisma) => {
+			await prisma.account.update({
+				where: {
+					id: senderAccountInformation.id,
+				},
+				data: {
+					balance: senderAccountInformation.balance.toNumber() - amount,
+				},
+			});
+
+			await prisma.account.update({
+				where: {
+					id: targetAccountInformation.id,
+				},
+				data: {
+					balance: targetAccountInformation.balance.toNumber() + amount,
+				},
+			});
 		});
 	}
 }
