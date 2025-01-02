@@ -1,14 +1,17 @@
+import ErrorDto from "src/dto/error/ErrorDto";
+
 class CustomError {
+	private static counter = 0;
+	private readonly errorId: number;
 	private readonly errorType: string;
-	private readonly className: string;
-	private readonly methodName: string;
 	private readonly error: any;
+	private readonly stackTrace: string;
 	private readonly message: string;
 
-	private constructor(errorType: string, className: string, methodName: string, error: Error, message: string) {
+	private constructor(errorType: string, error: Error, message: string) {
+		this.errorId = CustomError.counter++;
 		this.errorType = errorType;
-		this.className = className;
-		this.methodName = methodName;
+		this.stackTrace = new Error().stack;
 		this.error = error;
 		this.message = message;
 	}
@@ -17,48 +20,46 @@ class CustomError {
 		return new this.Builder();
 	}
 
-	private getErrorMessage(): string {
-		let errorMessage = `${this.errorType} -> ${this.className}.${this.methodName}: `;
+	public getBody(): ErrorDto {
+		const errorBody: any = {
+			errorId: this.errorId,
+			errorType: this.errorType,
+			stackTrace: this.stackTrace,
+			message: this.message,
+		};
 
-		if (this.error?.response) errorMessage += "Response:\n" + JSON.stringify(this.error.response.data, null, 2);
-		else if (this.error?.code) errorMessage += this.error.code;
+		if (this.error?.response) {
+			errorBody.response = this.error.response.data;
+		}
 
-		if (this.message) errorMessage += this.message;
+		if (this.error?.code) {
+			errorBody.errorCode = this.error.code;
+		}
 
-		return errorMessage;
+		return errorBody;
+	}
+
+	public getMessage(): string {
+		return this.message;
+	}
+
+	public log() {
+		console.error("[ERROR]");
+		console.error(this.getBody());
 	}
 
 	public throwError() {
-		const errorMessage = this.getErrorMessage();
-		console.error(errorMessage);
-		throw new Error(errorMessage);
-	}
-
-	public logToTerminal() {
-		const errorMessage = this.getErrorMessage();
-		console.error(errorMessage);
+		throw this;
 	}
 
 	// nested builder class
 	private static Builder = class {
 		private errorType: string;
-		private className: string;
-		private methodName: string;
 		private error: Error;
 		private message: string;
 
 		public setErrorType(errorType: string): this {
 			this.errorType = errorType;
-			return this;
-		}
-
-		public setClassName(className: string): this {
-			this.className = className;
-			return this;
-		}
-
-		public setMethodName(methodName: string): this {
-			this.methodName = methodName;
 			return this;
 		}
 
@@ -73,7 +74,7 @@ class CustomError {
 		}
 
 		public build(): CustomError {
-			return new CustomError(this.errorType, this.className, this.methodName, this.error, this.message);
+			return new CustomError(this.errorType, this.error, this.message);
 		}
 	};
 }

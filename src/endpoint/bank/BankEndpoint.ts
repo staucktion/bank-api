@@ -20,6 +20,10 @@ class BankEndpoint {
 			return await this.bankFacade.getAllAuditLog(req, res);
 		});
 
+		this.router.post("/transactions", async (req, res) => {
+			return await this.bankFacade.makeTransaction(req, res);
+		});
+
 		this.router.put("/provisions/add", async (req, res) => {
 			return await this.bankFacade.addProvision(req, res);
 		});

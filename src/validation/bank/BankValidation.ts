@@ -1,5 +1,8 @@
 import { account } from "@prisma/client";
+import { Request } from "express";
+import TransactionDto from "src/dto/bank/TransactionDto";
 import CustomError from "src/error/CustomError";
+import ValidationUtil from "src/util/ValidationUtil";
 
 class BankValidation {
 	public async getAccountFromCardRequest(req: any): Promise<{ cardNumber: string; expirationDate: string; cvv: string }> {
@@ -47,6 +50,50 @@ class BankValidation {
 		}
 
 		return { cardNumber, expirationDate, cvv, provision };
+	}
+
+	public async makeTransactionRequest(req: Request): Promise<TransactionDto> {
+		const transactionDto: TransactionDto = req.body;
+		const requiredFields: string[] = ["senderCardNumber", "senderExpirationDate", "senderCvv", "targetCardNumber", "amount"];
+		const numericFields = ["amount"];
+
+		// validate required fields
+		try {
+			ValidationUtil.checkRequiredFields(requiredFields, transactionDto);
+		} catch (error: any) {
+			throw error;
+		}
+
+		// validate numeric fields
+		try {
+			ValidationUtil.validateNumericFields(numericFields, transactionDto);
+		} catch (error: any) {
+			throw error;
+		}
+
+		// assign numeric fields
+		ValidationUtil.assignNumericFields(numericFields, transactionDto);
+
+		return transactionDto;
+	}
+
+	public async checkAccountExistence(bankAccountInformation: account): Promise<void> {
+		// check field
+		if (!bankAccountInformation || !bankAccountInformation.id) {
+			CustomError.builder().setErrorType("Input Validation").setMessage("Invalid card details").build().throwError();
+		}
+	}
+
+	public async transactionAmount(senderAccountInformation: account, amount: number): Promise<void> {
+		// check field
+		if (!senderAccountInformation || !senderAccountInformation.balance) {
+			CustomError.builder().setErrorType("Input Validation").setMessage("Invalid card details").build().throwError();
+		}
+
+		// check balance for sufficiency
+		if (senderAccountInformation.balance.toNumber() < amount) {
+			CustomError.builder().setErrorType("Input Validation Error").setMessage("Balance is not sufficient for transaction.").build().throwError();
+		}
 	}
 
 	public async checkBalanceToAddProvision(bankAccountInformation: account, offeredProvision: number): Promise<void> {
