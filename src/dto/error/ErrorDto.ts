@@ -3,6 +3,6 @@ export default interface ErrorDto {
 	errorType: string;
 	stackTrace: string;
 	message: string;
-	response?: any;
-	errorCode?: string;
+	statusCode: number;
+	externalMessage: string;
 }
