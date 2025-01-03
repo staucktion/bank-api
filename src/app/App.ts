@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import Config from "src/config/Config";
 import Logger from "src/log/Logger";
 import Router from "src/router/Router";
+import cors from "cors";
 
 class App {
 	private app: Application;
@@ -15,6 +16,9 @@ class App {
 	}
 
 	private initializeMiddlewares(): void {
+		// allow cors CORS (Cross-Origin Resource Sharing)
+		this.app.use(cors());
+
 		// log incoming requests
 		if (Config.log) this.app.use(Logger.logRequest);
 
