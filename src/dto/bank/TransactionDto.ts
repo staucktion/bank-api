@@ -4,4 +4,5 @@ export default interface TransactionDto {
 	senderCvv: string;
 	targetCardNumber: string;
 	amount: number;
+	description: string;
 }

@@ -118,7 +118,7 @@ class BankService {
 		}
 	}
 
-	public async makeTransaction(senderAccountInformation: account, targetAccountInformation: account, amount: number): Promise<void> {
+	public async makeTransaction(senderAccountInformation: account, targetAccountInformation: account, amount: number, description): Promise<void> {
 		try {
 			await this.prisma.$transaction(async (prisma) => {
 				await prisma.account.update({
@@ -136,6 +136,15 @@ class BankService {
 					},
 					data: {
 						balance: targetAccountInformation.balance.toNumber() + amount,
+					},
+				});
+
+				await prisma.transaction.create({
+					data: {
+						sender_account_id: senderAccountInformation.id,
+						receiver_account_id: targetAccountInformation.id,
+						amount: amount,
+						description: description,
 					},
 				});
 			});

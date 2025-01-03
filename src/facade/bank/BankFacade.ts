@@ -250,7 +250,7 @@ class BankFacade {
 
 		// make transaction
 		try {
-			await this.bankService.makeTransaction(senderAccountInformation, targetAccountInformation, transactionDto.amount);
+			await this.bankService.makeTransaction(senderAccountInformation, targetAccountInformation, transactionDto.amount, transactionDto.description);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
 				return res.status(error.getStatusCode()).send(error.getMessage());
