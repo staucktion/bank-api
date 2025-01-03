@@ -1,4 +1,5 @@
 import { account } from "@prisma/client";
+import Config from "src/config/Config";
 import CardDto from "src/dto/bank/CardDto";
 import ProvisionDto from "src/dto/bank/ProvisionDto";
 import TransactionDto from "src/dto/bank/TransactionDto";
@@ -23,6 +24,7 @@ class BankFacade {
 			cardDto = await this.bankValidation.getAccountFromCardRequest(req);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -33,7 +35,7 @@ class BankFacade {
 			bankAccountInformation = await this.bankService.getAccountFromCard(cardDto.cardNumber, cardDto.expirationDate, cardDto.cvv);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -58,6 +60,7 @@ class BankFacade {
 			return res.status(200).send(allAuditLog);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -71,6 +74,7 @@ class BankFacade {
 			provisionDto = await this.bankValidation.provisionRequest(req);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -81,7 +85,7 @@ class BankFacade {
 			bankAccountInformation = await this.bankService.getAccountFromCard(provisionDto.cardNumber, provisionDto.expirationDate, provisionDto.cvv);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -91,7 +95,7 @@ class BankFacade {
 			await this.bankValidation.checkAccount(bankAccountInformation);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -101,6 +105,7 @@ class BankFacade {
 			await this.bankValidation.checkBalanceToAddProvision(bankAccountInformation, provisionDto.provision);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -110,7 +115,7 @@ class BankFacade {
 			await this.bankService.addProvision(bankAccountInformation, provisionDto.provision);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -120,7 +125,7 @@ class BankFacade {
 			await this.bankService.writeAuditLog(`"${provisionDto.provision}" provision made for the account with card number: "${provisionDto.cardNumber}".`);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -137,6 +142,7 @@ class BankFacade {
 			provisionDto = await this.bankValidation.provisionRequest(req);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -147,7 +153,7 @@ class BankFacade {
 			bankAccountInformation = await this.bankService.getAccountFromCard(provisionDto.cardNumber, provisionDto.expirationDate, provisionDto.cvv);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -157,7 +163,7 @@ class BankFacade {
 			await this.bankValidation.checkAccount(bankAccountInformation);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -167,6 +173,7 @@ class BankFacade {
 			await this.bankValidation.checkProvisionToRemove(bankAccountInformation, provisionDto.provision);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -176,7 +183,7 @@ class BankFacade {
 			await this.bankService.removeProvision(bankAccountInformation, provisionDto.provision);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -186,7 +193,7 @@ class BankFacade {
 			await this.bankService.writeAuditLog(`"${provisionDto.provision}" provision removed for the account with card number: "${provisionDto.cardNumber}".`);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -203,6 +210,7 @@ class BankFacade {
 			transactionDto = await this.bankValidation.makeTransactionRequest(req);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -213,7 +221,7 @@ class BankFacade {
 			senderAccountInformation = await this.bankService.getAccountFromCard(transactionDto.senderCardNumber, transactionDto.senderExpirationDate, transactionDto.senderCvv);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -224,7 +232,7 @@ class BankFacade {
 			targetAccountInformation = await this.bankService.getAccountFromCardNumber(transactionDto.targetCardNumber);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
-				error.log();
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -235,6 +243,7 @@ class BankFacade {
 			await this.bankValidation.checkAccount(targetAccountInformation);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -244,6 +253,7 @@ class BankFacade {
 			await this.bankValidation.transactionAmount(senderAccountInformation, transactionDto.amount);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
@@ -253,6 +263,7 @@ class BankFacade {
 			await this.bankService.makeTransaction(senderAccountInformation, targetAccountInformation, transactionDto.amount, transactionDto.description);
 		} catch (error: any) {
 			if (error instanceof CustomError) {
+				if (Config.explicitErrorLog) error.log();
 				return res.status(error.getStatusCode()).send(error.getMessage());
 			}
 		}
