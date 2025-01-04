@@ -22,6 +22,8 @@ npm i
 npm run dev
 ```
 
+- Launch UI for engagement. Check [`bank-ui`](https://github.com/staucktion/bank-ui) repository.
+
 <br/>
 
 <h2 id="test">🔬 Test </h2>
