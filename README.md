@@ -2,7 +2,7 @@
 
 <br/>
 
-<h2 id="system-startup">🚀 System Startup</h2> 
+<h2 id="system-startup">🚀 System Startup</h2>
 
 - Launch database. Check [`postgresql`](https://github.com/staucktion/postgresql) repository.
 
@@ -21,6 +21,8 @@ npm i
 ```
 npm run dev
 ```
+
+<br/>
 
 <h2 id="test">🔬 Test </h2>
 
