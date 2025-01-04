@@ -20,7 +20,7 @@ class App {
 		this.app.use(cors());
 
 		// log incoming requests
-		if (Config.log) this.app.use(Logger.logRequest);
+		if (Config.requestLog) this.app.use(Logger.logRequest);
 
 		// parse JSON request body
 		this.app.use(express.json());

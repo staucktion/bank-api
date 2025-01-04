@@ -1,30 +1,30 @@
 import CustomError from "src/error/CustomError";
 
 class ValidationUtil {
-	public static checkExistence(dto) {
-		if (dto === undefined || dto === null || dto === "") {
-			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage(`Missing required object.`).build().throwError();
-		}
+	public static checkObjectExistence(obj) {
+		if (obj === undefined) CustomError.builder().setErrorType("Object Validation").setExternalMessage(`Object is undefined.`).build().throwError();
+		if (obj === null) CustomError.builder().setErrorType("Object Validation").setExternalMessage(`Object is null.`).build().throwError();
+		if (obj === "") CustomError.builder().setErrorType("Object Validation").setExternalMessage(`Object is empty string.`).build().throwError();
 	}
 
-	public static checkRequiredFields(requiredFields: string[], dto) {
-		const missingFields = requiredFields.filter((field) => dto[field] === undefined || dto[field] === null || dto[field] === "");
+	public static checkRequiredFields(requiredFields: string[], obj) {
+		const missingFields = requiredFields.filter((field) => obj[field] === undefined || obj[field] === null || obj[field] === "");
 
 		if (missingFields.length !== 0) {
-			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage(`Missing request fields: ${missingFields}`).build().throwError();
+			CustomError.builder().setErrorType("Object Validation").setExternalMessage(`Missing fields: ${missingFields}.`).build().throwError();
 		}
 	}
 
-	public static validateNumericFields(numericFields: string[], dto) {
-		const invalidFields = numericFields.filter((field) => isNaN(Number(dto[field])));
+	public static validateNumericFieldsOfObject(numericFields: string[], obj) {
+		const invalidFields = numericFields.filter((field) => isNaN(Number(obj[field])));
 
 		if (invalidFields.length !== 0) {
-			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage(`Invalid numeric fields: ${invalidFields}`).build().throwError();
+			CustomError.builder().setErrorType("Object Validation").setExternalMessage(`Invalid numeric fields: ${invalidFields}`).build().throwError();
 		}
 	}
 
-	public static assignNumericFields(numericFields: string[], dto) {
-		numericFields.map((field) => (dto[field] = Number(dto[field])));
+	public static assignNumericFieldsOnObject(numericFields: string[], obj) {
+		numericFields.map((field) => (obj[field] = Number(obj[field])));
 	}
 }
 

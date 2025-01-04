@@ -1,8 +1,6 @@
 import ErrorDto from "src/dto/error/ErrorDto";
 
 class CustomError {
-	private static counter = 0;
-	private readonly errorId: number;
 	private readonly errorType: string;
 	private readonly statusCode: number;
 	private readonly stackTrace: string;
@@ -10,7 +8,6 @@ class CustomError {
 	private readonly externalMessage: string;
 
 	private constructor(errorType: string, statusCode: number, message: string, externalMessage: string) {
-		this.errorId = CustomError.counter++;
 		this.errorType = errorType;
 		this.statusCode = statusCode;
 		this.stackTrace = new Error().stack;
@@ -24,7 +21,6 @@ class CustomError {
 
 	public getBody(): ErrorDto {
 		const errorBody: any = {
-			errorId: this.errorId,
 			errorType: this.errorType,
 			statusCode: this.statusCode,
 			stackTrace: this.stackTrace,

@@ -11,11 +11,19 @@ class BankValidation {
 		const cardDto: CardDto = req.body;
 		const requiredFields: string[] = ["cardNumber", "expirationDate", "cvv"];
 
+		// validate request body
+		try {
+			ValidationUtil.checkObjectExistence(cardDto);
+		} catch (error: any) {
+			if (error instanceof CustomError) CustomError.builder().setMessage("Request body is required.").setErrorType("Input Validation").setStatusCode(400).build().throwError();
+		}
+
 		// validate required fields
 		try {
 			ValidationUtil.checkRequiredFields(requiredFields, cardDto);
 		} catch (error: any) {
-			throw error;
+			if (error instanceof CustomError)
+				CustomError.builder().setMessage(`Request body is invalid. ${error.getBody().externalMessage}`).setErrorType("Input Validation").setStatusCode(400).build().throwError();
 		}
 
 		return cardDto;
@@ -26,22 +34,31 @@ class BankValidation {
 		const requiredFields: string[] = ["cardNumber", "expirationDate", "cvv", "provision"];
 		const numericFields = ["provision"];
 
+		// validate request body
+		try {
+			ValidationUtil.checkObjectExistence(provisionDto);
+		} catch (error: any) {
+			if (error instanceof CustomError) CustomError.builder().setMessage("Request body is required.").setErrorType("Input Validation").setStatusCode(400).build().throwError();
+		}
+
 		// validate required fields
 		try {
 			ValidationUtil.checkRequiredFields(requiredFields, provisionDto);
 		} catch (error: any) {
-			throw error;
+			if (error instanceof CustomError)
+				CustomError.builder().setMessage(`Request body is invalid. ${error.getBody().externalMessage}`).setErrorType("Input Validation").setStatusCode(400).build().throwError();
 		}
 
 		// validate numeric fields
 		try {
-			ValidationUtil.validateNumericFields(numericFields, provisionDto);
+			ValidationUtil.validateNumericFieldsOfObject(numericFields, provisionDto);
 		} catch (error: any) {
-			throw error;
+			if (error instanceof CustomError)
+				CustomError.builder().setMessage(`Request body is invalid. ${error.getBody().externalMessage}`).setErrorType("Input Validation").setStatusCode(400).build().throwError();
 		}
 
 		// assign numeric fields
-		ValidationUtil.assignNumericFields(numericFields, provisionDto);
+		ValidationUtil.assignNumericFieldsOnObject(numericFields, provisionDto);
 
 		return provisionDto;
 	}
@@ -51,22 +68,31 @@ class BankValidation {
 		const requiredFields: string[] = ["senderCardNumber", "senderExpirationDate", "senderCvv", "targetCardNumber", "amount"];
 		const numericFields = ["amount"];
 
+		// validate request body
+		try {
+			ValidationUtil.checkObjectExistence(transactionDto);
+		} catch (error: any) {
+			if (error instanceof CustomError) CustomError.builder().setMessage("Request body is required.").setErrorType("Input Validation").setStatusCode(400).build().throwError();
+		}
+
 		// validate required fields
 		try {
 			ValidationUtil.checkRequiredFields(requiredFields, transactionDto);
 		} catch (error: any) {
-			throw error;
+			if (error instanceof CustomError)
+				CustomError.builder().setMessage(`Request body is invalid. ${error.getBody().externalMessage}`).setErrorType("Input Validation").setStatusCode(400).build().throwError();
 		}
 
 		// validate numeric fields
 		try {
-			ValidationUtil.validateNumericFields(numericFields, transactionDto);
+			ValidationUtil.validateNumericFieldsOfObject(numericFields, transactionDto);
 		} catch (error: any) {
-			throw error;
+			if (error instanceof CustomError)
+				CustomError.builder().setMessage(`Request body is invalid. ${error.getBody().externalMessage}`).setErrorType("Input Validation").setStatusCode(400).build().throwError();
 		}
 
 		// assign numeric fields
-		ValidationUtil.assignNumericFields(numericFields, transactionDto);
+		ValidationUtil.assignNumericFieldsOnObject(numericFields, transactionDto);
 
 		return transactionDto;
 	}
@@ -74,25 +100,38 @@ class BankValidation {
 	public async checkAccount(bankAccountInformation: account): Promise<void> {
 		const requiredFields: string[] = ["id", "balance"];
 
-		// validate object existence
+		// validate bank account is exist
 		try {
-			ValidationUtil.checkExistence(bankAccountInformation);
+			ValidationUtil.checkObjectExistence(bankAccountInformation);
 		} catch (error: any) {
-			throw error;
+			if (error instanceof CustomError) CustomError.builder().setMessage("Invalid credentials.").setErrorType("Input Validation").setStatusCode(400).build().throwError();
 		}
 
-		// validate required fields
+		// check required fields
 		try {
 			ValidationUtil.checkRequiredFields(requiredFields, bankAccountInformation);
 		} catch (error: any) {
-			throw error;
+			if (error instanceof CustomError)
+				if (error instanceof CustomError) CustomError.builder().setMessage("Invalid credentials.").setErrorType("Input Validation").setStatusCode(400).build().throwError();
 		}
 	}
 
 	public async transactionAmount(senderAccountInformation: account, amount: number): Promise<void> {
-		// check field
-		if (!senderAccountInformation || !senderAccountInformation.balance) {
-			CustomError.builder().setErrorType("Input Validation").setStatusCode(400).setMessage("Invalid card details").build().throwError();
+		const requiredFields: string[] = ["id", "balance"];
+
+		// validate bank account is exist
+		try {
+			ValidationUtil.checkObjectExistence(senderAccountInformation);
+		} catch (error: any) {
+			if (error instanceof CustomError) CustomError.builder().setMessage("Invalid credentials.").setErrorType("Input Validation").setStatusCode(400).build().throwError();
+		}
+
+		// check required fields
+		try {
+			ValidationUtil.checkRequiredFields(requiredFields, senderAccountInformation);
+		} catch (error: any) {
+			if (error instanceof CustomError)
+				if (error instanceof CustomError) CustomError.builder().setMessage("Invalid credentials.").setErrorType("Input Validation").setStatusCode(400).build().throwError();
 		}
 
 		// check balance for sufficiency
