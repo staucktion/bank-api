@@ -131,7 +131,7 @@ class BankFacade {
 		}
 
 		// return success
-		res.status(200).send();
+		res.status(204).send();
 	};
 
 	removeProvision = async (req, res) => {
@@ -199,7 +199,7 @@ class BankFacade {
 		}
 
 		// return success
-		res.status(200).send();
+		res.status(204).send();
 	};
 
 	makeTransaction = async (req, res) => {
@@ -280,7 +280,7 @@ class BankFacade {
 		}
 
 		// return success
-		res.status(200).send();
+		res.status(204).send();
 	};
 }
 

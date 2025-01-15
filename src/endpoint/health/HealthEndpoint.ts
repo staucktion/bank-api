@@ -20,6 +20,8 @@ class HealthEndpoint {
 			res.status(200).json({
 				status: "UP",
 				mode: Config.mode,
+				requestLog: Config.requestLog,
+				explicitErrorLog: Config.explicitErrorLog,
 				description: "this API provides simulated bank API actions",
 			});
 		});
