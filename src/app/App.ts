@@ -35,7 +35,10 @@ class App {
 		const port = Config.port;
 		this.app.listen(port, () => {
 			console.log("🚀🚀🚀");
-			console.log(`API launched on: http://localhost:${port}`);
+			console.log(`🚀 API launched on: http://localhost:${port}`);
+			console.log(`🚀 Mode: ${Config.mode}`);
+			console.log(`🚀 Request Log: ${Config.requestLog}`);
+			console.log(`🚀 Explicit Error Log: ${Config.explicitErrorLog}`);
 			console.log("🚀🚀🚀");
 		});
 	}
