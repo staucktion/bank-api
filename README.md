@@ -8,7 +8,9 @@
 
 - Initialize and clean database. Check [`database-initializer`](https://github.com/staucktion/database-initializer) repository.
 
-- According to mode: Rename `.env.prod.example` or `.env.dev.example` as `.env` with proper configurations.
+- Rename `.env.dev.example` as `.env.dev` with proper configuration.
+
+- Rename `.env.prod.example` as `.env.prod` with proper configuration.
 
 - Install dependencies.
 
