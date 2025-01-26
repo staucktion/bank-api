@@ -31,7 +31,17 @@ class App {
 		this.router.setupRoute(this.app);
 	}
 
+	private checkEnvVariables(): void {
+		if (!Config.isEnvVarLoaded) {
+			console.error("🐛🐛🐛");
+			console.error("🐛 Environment variables are not loaded. Check '.env.dev' and '.env.prod' files.");
+			console.error("🐛🐛🐛");
+			process.exit(1);
+		}
+	}
+
 	public listen(): void {
+		this.checkEnvVariables();
 		const port = Config.port;
 		this.app.listen(port, () => {
 			console.log("🚀🚀🚀");
