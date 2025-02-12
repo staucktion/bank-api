@@ -1,4 +1,4 @@
-<h1 id="top" align="center">Bank API</h1>
+<h1 id="top" align="center">Bank API [v1.0.0]</h1>
 
 <br/>
 
