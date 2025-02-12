@@ -12,6 +12,8 @@
 
 - Rename `.env.prod.example` as `.env.prod` with proper configuration.
 
+### Development Mode
+
 - Install dependencies.
 
 ```
@@ -23,6 +25,12 @@ npm i
 ```
 npm run dev
 ```
+
+### Production mode
+
+- Refer system startup commands for production launch. Check [`docker-config`](https://github.com/staucktion/docker-config) repository.
+
+### UI
 
 - Launch UI for engagement. Check [`bank-ui`](https://github.com/staucktion/bank-ui) repository.
 
